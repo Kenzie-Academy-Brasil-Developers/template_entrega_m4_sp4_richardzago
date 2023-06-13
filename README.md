@@ -1,106 +1,177 @@
-# template_entrega_m4_sp4_richardzago
+# Documentação - Gerenciamento de Produtos e Categorias
 
-# S3-17 | 🏁 Entrega: Produtos e Categorias
+Esta documentação apresenta informações completas sobre o projeto de Gerenciamento de Produtos e Categorias, um serviço de back-end desenvolvido com JavaScript, Node.JS, Express.JS, PostgreSQL e Docker. O projeto permite criar, listar, atualizar e excluir produtos e categorias, além de fornecer endpoints para recuperar informações específicas e filtrar produtos por categoria.
 
-Para inciar este projeto, é necessário instalar as dependências, que serão utilizadas nos testes. Portanto utilize o comando abaixo para instalar tais dependências:
+## Visão Geral
 
-````
+O serviço de Gerenciamento de Produtos e Categorias é uma aplicação back-end que oferece uma API para realizar operações relacionadas a produtos e categorias. Ele utiliza o Node.JS e o framework Express.JS para construir os endpoints da API, enquanto o PostgreSQL é utilizado como banco de dados para armazenar os dados dos produtos e categorias. O Docker é utilizado para facilitar o gerenciamento de dependências e o provisionamento do ambiente de desenvolvimento.
+
+## Tecnologias Utilizadas
+
+- JavaScript: Linguagem de programação utilizada para desenvolver o serviço back-end.
+- Node.JS: Ambiente de execução JavaScript utilizado para executar o código do servidor.
+- Express.JS: Framework web utilizado para construir os endpoints da API.
+- PostgreSQL: Sistema de gerenciamento de banco de dados relacional utilizado para armazenar os dados dos produtos e categorias.
+- Docker: Plataforma de contêiner que permite empacotar o aplicativo juntamente com todas as suas dependências em um contêiner isolado.
+
+## 1. Pré-requisitos
+
+Antes de começar a executar o projeto, verifique se você possui as seguintes dependências instaladas em seu ambiente de desenvolvimento:
+
+- Node.JS: Para instalar o Node.JS, visite o site oficial em https://nodejs.org e siga as instruções para a instalação adequada em seu sistema operacional.
+- PostgreSQL: O PostgreSQL é necessário para o armazenamento dos dados. Você pode baixar e instalar o PostgreSQL a partir do site oficial em https://www.postgresql.org/. Recomendamos também a instalação do DBeaver (https://dbeaver.io/) como uma interface gráfica para gerenciamento do banco de dados.
+
+## 2. Instalação
+
+Siga as etapas abaixo para instalar e configurar o projeto:
+
+1. Clone o repositório do projeto em seu ambiente de desenvolvimento:
+
+```bash
+git clone https://github.com/seu-usuario/nome-do-repositorio.git
+```
+
+2. Acesse o diretório raiz do projeto:
+
+```bash
+cd nome-do-repositorio
+```
+
+3. Instale as dependências do projeto utilizando o gerenciador de pacotes de sua preferência (npm ou yarn):
+
+```bash
 yarn install
-````
+```
 
+## 3. Configure as variáveis de ambiente
+No arquivo ```.env```, forneça as credenciais corretas para se conectar ao seu banco de dados local. Certifique-se de alterar a variável ```postgres_host``` para localhost se estiver executando o projeto de forma local ou para postgres se estiver executando o projeto no Docker.
 
-**Atenção:** é necessário utilizar o `yarn` pois esse projeto foi iniciado com esse gerenciador de pacotes.
+## 4. Executando as Queries
 
-Para verificar se já possui o gerenciador yarn instalado utilize o seguinte comando:
+Antes de iniciar o serviço, é necessário executar as queries SQL para criar as tabelas necessárias no banco de dados. As queries estão disponíveis no arquivo `creates_tables.sql` no diretório raiz do projeto.
 
-````
-yarn --version
-````
+### Método 1: Executando as Queries pelo DBeaver
 
-Caso não possua o yarn instalado, utilize o comando abaixo para instalar globalmente na sua máquina:
+1. Certifique-se de ter o DBeaver instalado em sua má
 
-````
-npm install --global yarn
-````
-<br>
+quina. Você pode baixá-lo em [https://dbeaver.io/](https://dbeaver.io/).
 
-# Como alternar entre docker e localhost
+2. Abra o DBeaver e conecte-se ao servidor PostgreSQL utilizando as credenciais corretas (nome de usuário, senha, host e porta).
 
-Essa entrega já está com o Docker configurado e pronto para uso
+3. Após a conexão ser estabelecida, clique com o botão direito em "Databases", irá abrir uma janela, clique em "Create New Database" e informe o nome da database. Como exemplo, o nome será `products_management`.
 
-Basta buildar e subir nossos containers usando o comando padrão:
-````
+4. Na database `products_management`, clique com o botão direito, irá aparecer uma janela, selecione "SQL Editor" e "New SQL Script".
+
+5. Irá aparecer o prompt das queries, copie o código do arquivo `create_tables.sql` no diretório raiz do projeto e cole no prompt.
+
+6. Agora é só executar a query. Você pode clicar na seta amarela para executar ou utilizar o atalho ctrl + enter. Lembre-se de selecionar cada comando CREATE com o mouse antes, pois o DBeaver não executa todas as queries com apenas um clique.
+
+7. As queries serão executadas e as tabelas `categories` e `products` serão criadas no banco de dados selecionado.
+
+Repita os passos 3 a 7 para criar um banco de dados separado para ambiente de testes, se necessário.
+
+### Método 2: Executando as Queries pelo Terminal
+
+1. Abra o terminal e navegue até o diretório raiz do projeto.
+
+2. Certifique-se de que o serviço do PostgreSQL esteja em execução.
+
+3. Execute o seguinte comando para executar as queries no banco de dados de desenvolvimento:
+
+```bash
+psql -U <seu_usuario> -d products_management -f create_tables.sql
+```
+
+Substitua `<seu_usuario>` pelo nome de usuário do PostgreSQL que possui permissões para criar tabelas e acesso ao banco de dados `products_management`. Certifique-se de que o banco de dados `products_management` já tenha sido criado anteriormente.
+
+4. Para criar um banco de dados separado para ambiente de testes, execute o seguinte comando:
+
+```bash
+psql -U <seu_usuario> -d tests_products -f create_tables.sql
+```
+
+Substitua `<seu_usuario>` pelo nome de usuário do PostgreSQL que possui permissões para criar tabelas e acesso ao banco de dados `tests_products`. Certifique-se de que o banco de dados `tests_products` já tenha sido criado anteriormente.
+
+Após a execução bem-sucedida das queries, você estará pronto para iniciar o serviço e utilizar as APIs para gerenciar produtos e categorias.
+
+Certifique-se de que as credenciais de autenticação no arquivo `.env` correspondam às configurações do banco de dados PostgreSQL em sua máquina.
+
+## 5. Executando o Projeto
+
+Existem duas opções para executar o projeto: utilizando o Docker ou localmente.
+
+### 1. Utilizando o Docker
+
+Certifique-se de ter o Docker instalado em seu ambiente de desenvolvimento. Para executar o projeto com o Docker, execute o seguinte comando:
+
+```bash
 docker-compose up --build
-````
+```
 
-ou
-````
-docker compose up --build
-````
-O comando pode variar com a versão do docker compose instalada em sua máquina
+ATENÇÃO: A porta utilizada para rodar o Docker é a 5432. Caso você tenha algum problema com essa porta, basta alterá-la no arquivo `docker-compose.yml`.
 
-***ATENÇÃO:*** a porta utilizada para rodar nosso docker é a `5431`.
-Caso tenha algum problema com essa porta, basta alterá-la no docker-compose.yml.
+Com isso, o projeto será construído e os containers serão iniciados. O serviço estará disponível no endereço `
 
-<br>
+http://localhost:3000`.
 
-## **Mas caso você necessite executar a entrega em `localhost`**
-**Configure as variáveis de ambiente no seu .env**, passando as credenciais corretas para conectar em seu banco local
+### 2. Executando Localmente
 
-E altere a variável **`DB_HOST`** para **`localhost`**
+Para executar o projeto localmente sem o uso do Docker, certifique-se de ter as variáveis de ambiente configuradas corretamente no arquivo `.env`. Em seguida, execute o seguinte comando:
 
-Com isso feito, para rodar sua aplicação, basta utilizar o comando
-````
+```bash
 yarn dev
-````
+```
 
-<br>
+Isso iniciará o projeto no endereço `http://localhost:PORT`, onde `PORT` é a porta definida no arquivo `.env`.
 
-# **Sobre os testes**
+## Testes
 
-Essa aplicação possui testes, que serão utilizados para validar, se todas as regras de negócio foram aplicadas de maneira correta.
+O projeto possui testes automatizados para garantir seu correto funcionamento. Antes de executar os testes, crie um banco de dados chamado "products_management" para o ambiente de desenvolvimento e um banco de dados chamado "tests_products" para o ambiente de teste.
 
-Os testes estão localizados em `src/__tests__`.
+Para executar os testes, utilize o seguinte comando:
 
-Na subpasta `integration` estão os testes.
-
-
-No arquivo `jest.config.json` estão algumas configurações necessárias para os testes rodarem.
-
-**`De modo algum altere qualquer um desses arquivos.`** Isso poderá comprometer a integridade dos testes.
-
-E também não altere o script de `test` localizado no `package.json`. Isso será utilizado para rodar os testes.
-
-<br>
-
-
-# **Rodando os testes** 
-
-Para rodar os testes é necessário que no seu terminal, você esteja dentro do diretório do projeto.
-
-Estando no terminal e dentro do caminho correto, você poderá utilizar os comandos a seguir:
-
-### Rodar todos os testes
-````
+```bash
 yarn test
-````
-#
-### Rodar todos os testes e ter um log ainda mais completo
-````
-yarn test --all
-````
-#
+```
 
+## Importando no Insomnia
 
-<br>
+Caso deseje utilizar o Insomnia para testar as requisições da API, você pode importar o arquivo `workspace.json` fornecido junto com a documentação. Siga as etapas abaixo para importar o workspace no Insomnia:
 
+1. Abra o Insomnia.
 
-**Caso você queira verificar todas as opções de execução de testes, visite a [Documentação oficial do Jest](https://jestjs.io/docs/cli)**
+2. Clique no botão "+ Create" na barra lateral esquerda.
 
-Após rodar um dos comandos aparecerá um log no seu terminal, contendo as informações da execução do teste.
+3. Selecione "Import/Export".
 
-**Observação:** O teste pode demorar alguns segundos para ser finalizado. Quanto maior for o teste, mais tempo será consumido para a execução.
+4. Na janela de importação, selecione a opção "Import Data" e escolha o arquivo `workspace.json`.
 
-#
+5. Clique em "Import" e o workspace será importado com todas as requisições pré-configuradas.
 
+Após a importação, você poderá ver as requisições no painel esquerdo do Insomnia após ter clicado em DEBUG, facilitando o teste e uso da API.
 
+## Endpoints
+
+A tabela a seguir lista os endpoints disponíveis na API, juntamente com suas respectivas responsabilidades:
+
+| Método | Endpoint                            | Responsabilidade                                       |
+| ------ | ----------------------------------- | ------------------------------------------------------ |
+| POST   | /categories                         | Criação de uma nova categoria                          |
+| GET    | /categories                         | Lista todas as categorias                              |
+| GET    | /categories/:id                     | Retorna os dados de uma categoria específica           |
+| PATCH  | /categories/:id                     | Atualiza os dados de uma categoria específica          |
+| DELETE | /categories/:id                     | Deleta uma categoria do banco                          |
+| POST   | /products                           | Criação de um novo produto                             |
+| GET    | /products                           | Lista todos os produtos                                |
+| GET    | /products/:id                       | Retorna os dados de um produto específico              |
+| PATCH  | /products/:id                       | Atualiza os dados de um produto específico             |
+| DELETE | /products/:id                       | Deleta um produto do banco                             |
+| GET    | /products/category/:category_id      | Retorna os dados dos produtos pertencentes a uma categoria específica |
+
+## Observações
+
+- Certifique-se de fornecer os valores corretos para as variáveis de ambiente relacionadas ao banco de dados, tanto para o ambiente de desenvolvimento quanto para o ambiente de teste.
+- Ao criar uma nova categoria ou produto, forneça os dados necessários no corpo da solicitação.
+- Certifique-se de que a porta 5432 não esteja sendo utilizada ao executar o Docker.
+
+Com esta documentação, você terá todas as informações necessárias para instalar, executar e utilizar o serviço de Gerenciamento de Produtos e Categorias, além de importar o workspace no Insomnia para facilitar o teste da API.
